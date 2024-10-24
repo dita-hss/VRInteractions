@@ -106,7 +106,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.interaction.toolkit": {
-      "version": "2.4.1",
+      "version": "2.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -132,7 +132,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.xr.management": {
-      "version": "4.4.0",
+      "version": "4.5.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {

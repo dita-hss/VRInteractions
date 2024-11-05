@@ -16,8 +16,24 @@ public class RaycastGrabber : MonoBehaviour
     [SerializeField]   
     private Transform leftHandTransform;
 
-    // hoolding weapon?
+    //////////////////////////////////////////////////
+    // weapon prefabs
+
+    [SerializeField]
+    private GameObject prefabAKM;
+    [SerializeField]
+    private GameObject prefabThrowable;
+    [SerializeField]
+    private GameObject prefabJavelin;
+    [SerializeField]
+    private GameObject prefabBow;
+
+
+    //////////////////////////////////////////////////
+
     private bool holdingWeapon = false;
+    private GameObject currentRightHandWeapon = null;
+    private GameObject currentLeftHandWeapon = null;
 
     void Start()
     {
@@ -42,32 +58,62 @@ public class RaycastGrabber : MonoBehaviour
             // Don't forget to attach the player origin in the editor!
             //playerOrigin.transform.position = hit.collider.gameObject.transform.position;
 
-            
-
-
-            
+            ////Debug.Log("bool check: " + holdingWeapon);
             // if currently holding weapon, destroy the weapon being held, and replace it with the new weapon
-            if (holdingWeapon) {
-                // destroy the weapon
-                Destroy(rightHandTransform.GetChild(0).gameObject);
-                // current weapon is not being destroyed
-                Debug.Log("hit object: " + rightHandTransform.GetChild(0).gameObject);
+            if (holdingWeapon){
+                DestroyCurrentWeapon();
             }
-            
-            GameObject newObject = Instantiate(hit.collider.gameObject, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
-            Debug.Log("object " + newObject + " " + newObject.name);
-            newObject.transform.SetParent(rightHandTransform, false);
+
+            ///if its a throwing knife , then instantiate it in both hands
+            if (hit.collider.gameObject.name == "throwable") {
+
+                ///instantiate the weapon in both hands and set the rotation
+                currentRightHandWeapon = Instantiate(prefabThrowable, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
+                currentLeftHandWeapon = Instantiate(prefabThrowable, leftHandTransform.position, leftHandTransform.rotation, leftHandTransform);
+
+                currentRightHandWeapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                currentLeftHandWeapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+                
+                    //Debug.Log("Throwable object added to both hands: " + currentRightHandWeapon.name);
+            }
+            else if (hit.collider.gameObject.name == "akm") {
+                // otherwise, instantiate the weapon in the right hand with the correct rotation
+                currentRightHandWeapon = Instantiate(prefabAKM, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
+                currentRightHandWeapon.transform.localRotation = Quaternion.Euler(0, -90, 0);
+                
+                    //Debug.Log("Object added to right hand: " + currentRightHandWeapon.name);
+            } else if (hit.collider.gameObject.name == "Bow") {     
+                
+                currentRightHandWeapon = Instantiate(prefabBow, leftHandTransform.position, leftHandTransform.rotation, leftHandTransform);
+
+            } else {
+                //this would be the javelin
+                currentRightHandWeapon = Instantiate(prefabJavelin, rightHandTransform.position, rightHandTransform.rotation, rightHandTransform);
+                currentRightHandWeapon.transform.localRotation = Quaternion.Euler(45, 0, 0);
+            }
+
             holdingWeapon = true;
+        }
+    }
 
 
-            //newObject.transform.localPosition = Vector3.zero;
-            // rotate 45 degrees
-            newObject.transform.localRotation = Quaternion.Euler(0, -90, 0);
+    /// need to destroy the current weapon before instantiating a new one
+    void DestroyCurrentWeapon() {
 
+        if (currentRightHandWeapon != null) 
+        {
+            Destroy(currentRightHandWeapon);
+            currentRightHandWeapon = null;
+        }
 
+        if (currentLeftHandWeapon != null) 
+        {
+            Destroy(currentLeftHandWeapon);
+            currentLeftHandWeapon = null;
         }
 
     }
+    
 }
 
 
